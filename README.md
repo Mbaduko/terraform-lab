@@ -1,0 +1,56 @@
+# Terraform Lab — AWS Infrastructure as Code
+
+Provision foundational AWS infrastructure with Terraform, storing state remotely in **S3** with **DynamoDB** state locking.
+
+## Architecture
+
+| Resource | Purpose |
+|---|---|
+| VPC | Isolated network for the lab |
+| Public subnet | Hosts the EC2 instance |
+| Internet Gateway + route | Gives the subnet internet access |
+| Security group | SSH (22) from my IP, HTTP (80) from anywhere |
+| EC2 (t2.micro) | Free Tier compute instance |
+| S3 + DynamoDB | Remote state storage and locking |
+
+## Project Structure
+
+```
+├── main.tf        # Provider and resources
+├── variables.tf   # Input variables
+├── outputs.tf     # Output values
+└── screenshots/   # Verification screenshots
+```
+
+## Prerequisites
+
+- Terraform >= 1.5
+- AWS CLI configured (`aws configure`) with Free Tier / sandbox credentials
+
+## Usage
+
+```bash
+terraform init
+terraform plan
+terraform apply
+terraform destroy
+```
+
+---
+
+## Build Log
+
+### 1. VPC
+
+Creates a VPC (`10.0.0.0/16` by default) with DNS support and DNS hostnames enabled, so instances launched inside it get resolvable public DNS names. Every resource is tagged with `Project` and `ManagedBy` via the provider's `default_tags`.
+
+- **Variables:** `aws_region`, `project_name`, `vpc_cidr`
+- **Outputs:** `vpc_id`, `vpc_cidr`
+
+**Screenshot — `terraform plan`:**
+
+<!-- ![VPC plan](screenshots/01-vpc-plan.png) -->
+
+**Screenshot — VPC in AWS Console:**
+
+<!-- ![VPC console](screenshots/01-vpc-console.png) -->
