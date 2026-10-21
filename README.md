@@ -47,14 +47,6 @@ Creates a VPC (`10.0.0.0/16` by default) with DNS support and DNS hostnames enab
 - **Variables:** `aws_region`, `project_name`, `vpc_cidr`
 - **Outputs:** `vpc_id`, `vpc_cidr`
 
-**Screenshot — `terraform plan`:**
-
-<!-- ![VPC plan](screenshots/01-vpc-plan.png) -->
-
-**Screenshot — VPC in AWS Console:**
-
-<!-- ![VPC console](screenshots/01-vpc-console.png) -->
-
 ### 2. Public Subnet
 
 Creates a `/24` subnet (`10.0.1.0/24` by default) inside the VPC, placed in the region's first available AZ (looked up dynamically, not hard-coded). `map_public_ip_on_launch` gives instances a public IP automatically. It becomes truly *public* once the Internet Gateway route is attached in the next step.
@@ -62,10 +54,8 @@ Creates a `/24` subnet (`10.0.1.0/24` by default) inside the VPC, placed in the 
 - **Variables:** `public_subnet_cidr`
 - **Outputs:** `public_subnet_id`, `public_subnet_az`
 
-**Screenshot — `terraform plan`:**
+### 3. Internet Gateway and Route
 
-<!-- ![Subnet plan](screenshots/02-subnet-plan.png) -->
+Attaches an Internet Gateway to the VPC and creates a public route table with a default route (`0.0.0.0/0`) pointing to it. The route table is associated with the public subnet, which is what actually makes the subnet public.
 
-**Screenshot — Subnet in AWS Console:**
-
-<!-- ![Subnet console](screenshots/02-subnet-console.png) -->
+- **Outputs:** `internet_gateway_id`, `public_route_table_id`
