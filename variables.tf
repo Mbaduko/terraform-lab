@@ -33,9 +33,9 @@ variable "my_ip" {
 }
 
 variable "instance_type" {
-  description = "EC2 instance type (t3.micro is Free Tier eligible on this account; t2.micro is not)"
+  description = "EC2 instance type"
   type        = string
-  default     = "t3.micro"
+  default     = "t2.micro"
 }
 
 variable "key_name" {
