@@ -10,7 +10,7 @@ Provision foundational AWS infrastructure with Terraform, storing state remotely
 | Public subnet | Hosts the EC2 instance |
 | Internet Gateway + route | Gives the subnet internet access |
 | Security group | SSH (22) from my IP, HTTP (80) from anywhere |
-| EC2 (t2.micro) | Free Tier compute instance |
+| EC2 (t3.micro) | Free Tier compute instance |
 | S3 + DynamoDB | Remote state storage and locking |
 
 ## Project Structure
@@ -76,3 +76,21 @@ Creates a security group in the VPC with three rules:
 
 - **Variables:** `my_ip`
 - **Outputs:** `security_group_id`
+
+### 5. EC2 Instance
+
+Launches a `t3.micro` instance in the public subnet with the security group attached. The AMI is the latest Amazon Linux 2023, looked up at plan time. On first boot, a user-data script installs and starts **nginx**, so port 80 can be tested from a browser.
+
+`t3.micro` is used because `t2.micro` is not Free Tier eligible on this account (checked with `aws ec2 describe-instance-types --filters Name=free-tier-eligible,Values=true`).
+
+Hardening defaults: IMDSv2 required and an encrypted 8 GB `gp3` root volume.
+
+- **Variables:** `instance_type`, `key_name` (an existing key pair, used for SSH)
+- **Outputs:** `instance_id`, `instance_public_ip`, `web_url`
+
+Verify:
+
+```bash
+curl $(terraform output -raw web_url)
+ssh -i ~/.ssh/terraform-lab-key.pem ec2-user@$(terraform output -raw instance_public_ip)
+```

@@ -31,3 +31,15 @@ variable "my_ip" {
     error_message = "my_ip must be a valid CIDR block, e.g. 203.0.113.10/32."
   }
 }
+
+variable "instance_type" {
+  description = "EC2 instance type (t3.micro is Free Tier eligible on this account; t2.micro is not)"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "key_name" {
+  description = "Name of an existing EC2 key pair for SSH (leave null to launch without one)"
+  type        = string
+  default     = null
+}
