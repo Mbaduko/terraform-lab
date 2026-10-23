@@ -16,6 +16,8 @@ Provision foundational AWS infrastructure with Terraform, storing state remotely
 ## Project Structure
 
 ```
+├── bootstrap/     # Creates the S3 bucket + DynamoDB table (local state)
+├── backend.tf     # S3 remote backend with DynamoDB locking
 ├── main.tf        # Provider and resources
 ├── variables.tf   # Input variables
 ├── outputs.tf     # Output values
@@ -31,7 +33,12 @@ Provision foundational AWS infrastructure with Terraform, storing state remotely
 ## Usage
 
 ```bash
-cp example.tfvars terraform.tfvars   # then set my_ip
+# 1. Create the backend (once)
+terraform -chdir=bootstrap init
+terraform -chdir=bootstrap apply
+
+# 2. Deploy the infrastructure
+cp example.tfvars terraform.tfvars   # then set my_ip and key_name
 terraform init
 terraform plan
 terraform apply
@@ -91,4 +98,26 @@ Verify:
 ```bash
 curl $(terraform output -raw web_url)
 ssh -i ~/.ssh/terraform-lab-key.pem ec2-user@$(terraform output -raw instance_public_ip)
+```
+
+### 6. Remote Backend (S3 + DynamoDB)
+
+A backend can't create its own bucket, so the `bootstrap/` module creates it first, using local state:
+
+- **S3 bucket** `terraform-lab-state-<account-id>`: stores the state file, with versioning (state history), AES-256 encryption and all public access blocked.
+- **DynamoDB table** `terraform-lab-lock`: partition key `LockID`, on-demand billing. Terraform writes a lock item here during `plan`/`apply` so two runs can't change the state at once.
+
+`backend.tf` points the root module at them. The existing local state was moved into S3 with:
+
+```bash
+terraform init -migrate-state
+```
+
+Terraform warns that `dynamodb_table` is deprecated in favor of S3-native locking (`use_lockfile`). DynamoDB is kept because this lab requires it.
+
+Verify:
+
+```bash
+aws s3 ls s3://terraform-lab-state-<account-id>/terraform-lab/
+aws dynamodb scan --table-name terraform-lab-lock
 ```
