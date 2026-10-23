@@ -21,3 +21,13 @@ variable "public_subnet_cidr" {
   type        = string
   default     = "10.0.1.0/24"
 }
+
+variable "my_ip" {
+  description = "Your public IP in CIDR notation for SSH access (e.g. 203.0.113.10/32)"
+  type        = string
+
+  validation {
+    condition     = can(cidrhost(var.my_ip, 0))
+    error_message = "my_ip must be a valid CIDR block, e.g. 203.0.113.10/32."
+  }
+}

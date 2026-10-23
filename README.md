@@ -19,6 +19,7 @@ Provision foundational AWS infrastructure with Terraform, storing state remotely
 ├── main.tf        # Provider and resources
 ├── variables.tf   # Input variables
 ├── outputs.tf     # Output values
+├── example.tfvars # Sample variable values
 └── screenshots/   # Verification screenshots
 ```
 
@@ -30,6 +31,7 @@ Provision foundational AWS infrastructure with Terraform, storing state remotely
 ## Usage
 
 ```bash
+cp example.tfvars terraform.tfvars   # then set my_ip
 terraform init
 terraform plan
 terraform apply
@@ -59,3 +61,18 @@ Creates a `/24` subnet (`10.0.1.0/24` by default) inside the VPC, placed in the 
 Attaches an Internet Gateway to the VPC and creates a public route table with a default route (`0.0.0.0/0`) pointing to it. The route table is associated with the public subnet, which is what actually makes the subnet public.
 
 - **Outputs:** `internet_gateway_id`, `public_route_table_id`
+
+### 4. Security Group
+
+Creates a security group in the VPC with three rules:
+
+| Direction | Port | Source | Purpose |
+|---|---|---|---|
+| Inbound | 22 (TCP) | `my_ip` | SSH, restricted to your IP |
+| Inbound | 80 (TCP) | `0.0.0.0/0` | HTTP from anywhere |
+| Outbound | All | `0.0.0.0/0` | Updates and package installs |
+
+`my_ip` has no default and is validated as a CIDR. Set it in `terraform.tfvars` (git-ignored) so your IP is never committed.
+
+- **Variables:** `my_ip`
+- **Outputs:** `security_group_id`
