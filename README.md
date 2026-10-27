@@ -121,3 +121,75 @@ Verify:
 aws s3 ls s3://terraform-lab-state-<account-id>/terraform-lab/
 aws dynamodb scan --table-name terraform-lab-lock
 ```
+
+---
+
+## Screenshots
+
+### `terraform plan`
+
+**Plan (1/8)**
+
+![Plan 1](screenshots/plan1.png)
+
+**Plan (2/8)**
+
+![Plan 2](screenshots/plan2.png)
+
+**Plan (3/8)**
+
+![Plan 3](screenshots/plan3.png)
+
+**Plan (4/8)**
+
+![Plan 4](screenshots/plan4.png)
+
+**Plan (5/8)**
+
+![Plan 5](screenshots/plan5.png)
+
+**Plan (6/8)**
+
+![Plan 6](screenshots/plan6.png)
+
+**Plan (7/8)**
+
+![Plan 7](screenshots/plan7.png)
+
+**Plan (8/8)**
+
+![Plan 8](screenshots/plan8.png)
+
+### `terraform apply`
+
+**Apply**
+
+![Apply](screenshots/apply.png)
+
+### Verification
+
+**EC2 instance running (t2.micro)**
+
+![EC2](screenshots/ec2.png)
+
+**State file in S3**
+
+![S3 state file](screenshots/s3.png)
+
+**State file versions**
+
+![State file versions](screenshots/statefileVersions.png)
+
+**DynamoDB lock table**
+
+![DynamoDB lock table](screenshots/dynamolocktable.png)
+
+### `terraform destroy`
+
+**Destroy (1/2)**
+
+![Destroy 1](screenshots/destroy1.png)
+
+**Destroy (2/2) — 10 resources destroyed**
+
+![Destroy 2](screenshots/destroy2.png)
