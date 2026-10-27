@@ -184,6 +184,10 @@ aws dynamodb scan --table-name terraform-lab-lock
 
 ![DynamoDB lock table](screenshots/dynamolocktable.png)
 
+**Lock held during `apply`**
+
+![DynamoDB lock item](screenshots/dynamodblocktable2.png)
+
 ### `terraform destroy`
 
 **Destroy (1/2)**
